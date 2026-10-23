@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Memes</title>
+  <style>
+    :root {
+      --bg: #101014;
+      --card: #1b1b22;
+      --accent: #facc15;
+      --text: #ffffff;
+      --border: #facc15;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 25px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      color: var(--text);
+      background: var(--bg);
+      transition: background .25s, color .25s;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 850px;
+      padding: 25px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      transition: background .25s, border-color .25s;
+    }
+
+    h1 {
+      margin: 0 0 25px;
+      font-size: clamp(23px, 4vw, 34px);
+      color: var(--accent);
+      line-height: 1.25;
+    }
+
+    .image-box {
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+      cursor: zoom-in;
+      border: 4px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color .25s, transform .2s;
+    }
+
+    .image-box:hover {
+      transform: scale(1.01);
+    }
+
+    #meme {
+      display: block;
+      max-width: 100%;
+      width: auto;
+      max-height: 70vh;
+      object-fit: contain;
+      border-radius: 7px;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+      transition: background .2s, color .2s, transform .2s;
+    }
+
+    button:hover {
+      background: var(--accent);
+      color: #111;
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: scale(.96);
+    }
+
+    .colors {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .color {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border: 2px solid white;
+      border-radius: 50%;
+    }
+
+    .color:hover {
+      transform: scale(1.15);
+    }
+
+    .yellow { background: #facc15; }
+    .purple { background: #a855f7; }
+    .blue { background: #38bdf8; }
+    .green { background: #4ade80; }
+    .pink { background: #f472b6; }
+    .red { background: #f87171; }
+
+    .fullscreen {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, .96);
+      cursor: zoom-out;
+    }
+
+    .fullscreen.active {
+      display: flex;
+    }
+
+    .fullscreen img {
+      max-width: 96vw;
+      max-height: 94vh;
+      object-fit: contain;
+      border: 2px solid var(--accent);
+      border-radius: 5px;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      font-size: 25px;
+      background: #222;
+      color: white;
+      border-color: #555;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 18px 12px;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      #meme {
+        max-height: 60vh;
+      }
+
+      .controls {
+        gap: 8px;
+      }
+
+      button {
+        padding: 10px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>COMO ME SINTO QUANDO DOU UM MERGULHO</h1>
+
+    <div class="image-box" id="imageBox">
+      <img
+        id="meme"
+        src="https://s1.static.brasilescola.uol.com.br/be/2022/10/meme-mo-paz.jpg"
+        alt="Meme"
+        draggable="false"
+      >
+    </div>
+
+    <div class="controls">
+      <button id="fullscreenBtn">Tela cheia</button>
+      <button id="zoomBtn">Zoom +</button>
+      <button id="rotateBtn">Girar</button>
+      <button id="filterBtn">Filtro</button>
+      <button id="downloadBtn">Baixar</button>
+      <button id="resetBtn">Restaurar</button>
+      <button id="themeBtn">Tema</button>
+    </div>
+
+    <div class="colors">
+      <button class="color yellow" data-color="#facc15" aria-label="Amarelo"></button>
+      <button class="color purple" data-color="#a855f7" aria-label="Roxo"></button>
+      <button class="color blue" data-color="#38bdf8" aria-label="Azul"></button>
+      <button class="color green" data-color="#4ade80" aria-label="Verde"></button>
+      <button class="color pink" data-color="#f472b6" aria-label="Rosa"></button>
+      <button class="color red" data-color="#f87171" aria-label="Vermelho"></button>
+    </div>
+  </main>
+
+  <div class="fullscreen" id="fullscreen">
+    <button class="close" id="closeBtn" aria-label="Fechar">×</button>
+    <img id="fullscreenImg" alt="Meme em tela cheia">
+  </div>
+
+  <script>
+    const root = document.documentElement;
+    const meme = document.getElementById("meme");
+    const imageBox = document.getElementById("imageBox");
+    const fullscreen = document.getElementById("fullscreen");
+    const fullscreenImg = document.getElementById("fullscreenImg");
+
+    const originalSrc = meme.src;
+    const originalTitle = document.querySelector("h1").textContent;
+
+    let zoom = 1;
+    let rotation = 0;
+    let filterIndex = 0;
+    let lightTheme = false;
+
+    const filters = [
+      "none",
+      "grayscale(1)",
+      "sepia(1)",
+      "contrast(1.4)",
+      "saturate(1.8)",
+      "brightness(1.2)",
+      "hue-rotate(90deg)"
+    ];
+
+    function updateImage() {
+      meme.style.transform =
+        `scale(${zoom}) rotate(${rotation}deg)`;
+      meme.style.filter = filters[filterIndex];
+    }
+
+    function openFullscreen() {
+      fullscreenImg.src = meme.src;
+      fullscreenImg.style.filter = filters[filterIndex];
+      fullscreenImg.style.transform = `rotate(${rotation}deg)`;
+      fullscreen.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeFullscreen() {
+      fullscreen.classList.remove("active");
+      document.body.style.overflow = "";
+    }
+
+    imageBox.addEventListener("click", openFullscreen);
+    document.getElementById("fullscreenBtn").addEventListener("click", openFullscreen);
+    document.getElementById("closeBtn").addEventListener("click", closeFullscreen);
+
+    fullscreen.addEventListener("click", event => {
+      if (event.target === fullscreen) closeFullscreen();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeFullscreen();
+
+      if (event.key === "+" || event.key === "=") {
+        zoom = Math.min(zoom + .1, 3);
+        updateImage();
+      }
+
+      if (event.key === "-") {
+        zoom = Math.max(zoom - .1, .5);
+        updateImage();
+      }
+    });
+
+    document.getElementById("zoomBtn").addEventListener("click", () => {
+      zoom = zoom >= 2.5 ? 1 : +(zoom + .25).toFixed(2);
+      updateImage();
+    });
+
+    document.getElementById("rotateBtn").addEventListener("click", () => {
+      rotation = (rotation + 90) % 360;
+      updateImage();
+
+      if (fullscreen.classList.contains("active")) {
+        fullscreenImg.style.transform = `rotate(${rotation}deg)`;
+      }
+    });
+
+    document.getElementById("filterBtn").addEventListener("click", () => {
+      filterIndex = (filterIndex + 1) % filters.length;
+      updateImage();
+
+      if (fullscreen.classList.contains("active")) {
+        fullscreenImg.style.filter = filters[filterIndex];
+      }
+    });
+
+    document.querySelectorAll(".color").forEach(button => {
+      button.addEventListener("click", () => {
+        const color = button.dataset.color;
+        root.style.setProperty("--accent", color);
+        root.style.setProperty("--border", color);
+      });
+    });
+
+    document.getElementById("themeBtn").addEventListener("click", () => {
+      lightTheme = !lightTheme;
+
+      root.style.setProperty("--bg", lightTheme ? "#f1f1f1" : "#101014");
+      root.style.setProperty("--card", lightTheme ? "#ffffff" : "#1b1b22");
+      root.style.setProperty("--text", lightTheme ? "#171717" : "#ffffff");
+    });
+
+    document.getElementById("downloadBtn").addEventListener("click", async () => {
+      try {
+        const response = await fetch(meme.src);
+        if (!response.ok) throw new Error();
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "meme.jpg";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch {
+        window.open(meme.src, "_blank", "noopener,noreferrer");
+      }
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      zoom = 1;
+      rotation = 0;
+      filterIndex = 0;
+      lightTheme = false;
+
+      meme.src = originalSrc;
+      document.querySelector("h1").textContent = originalTitle;
+
+      root.style.setProperty("--bg", "#101014");
+      root.style.setProperty("--card", "#1b1b22");
+      root.style.setProperty("--accent", "#facc15");
+      root.style.setProperty("--border", "#facc15");
+      root.style.setProperty("--text", "#ffffff");
+
+      updateImage();
+      closeFullscreen();
+    });
+  </script>
+</body>
+</html>
